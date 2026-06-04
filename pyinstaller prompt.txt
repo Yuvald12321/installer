@@ -1,0 +1,1 @@
+pyinstaller --onefile --noconsole --icon "logo.ico" -n "Installer" main.py
