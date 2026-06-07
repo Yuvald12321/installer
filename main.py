@@ -12,7 +12,7 @@ class Installer(ctk.CTk):
         self.username = "Yuvald12321"
         self.download_folder = Path.home() / "Downloads"
         if not self.download_folder.exists():
-            self.download_folder = filedialog.askdirectory(title="Select the download folder")
+            self.download_folder = Path(filedialog.askdirectory(title="Select the downloads folder"))
 
         self.title("Installer")
         self.geometry("300x200")
