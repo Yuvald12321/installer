@@ -11,8 +11,7 @@ class Installer(ctk.CTk):
         self.headers = {"Authorization": f"token {self.token}"}
         self.username = "Yuvald12321"
         self.download_folder = Path.home() / "Downloads"
-        if not self.download_folder.exists():
-            self.download_folder = Path(filedialog.askdirectory(title="Select the downloads folder"))
+        self.ask_download_folder()
 
         self.title("Installer")
         self.geometry("300x200")
@@ -46,6 +45,14 @@ class Installer(ctk.CTk):
                 messagebox.showerror("Error", f"Error downloading {selected_program}: {type(e).__name__}: {str(e)}")
         else:
             messagebox.showwarning("Warning", "Please select a valid program.")
+
+    def ask_download_folder(self):
+        if not self.download_folder.exists():
+            temp_download_folder = filedialog.askdirectory(title="Select the downloads folder")
+            if temp_download_folder:
+                self.download_folder = Path(temp_download_folder)
+            else:
+                self.ask_download_folder()
 
     def get_programs(self):
         programs_dict = {}
