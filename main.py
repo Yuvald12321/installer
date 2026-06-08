@@ -1,7 +1,8 @@
-import customtkinter as ctk
-from tkinter import filedialog, messagebox
 from pathlib import Path
+from tkinter import filedialog, messagebox
+import customtkinter as ctk
 import requests
+
 
 class Installer(ctk.CTk):
     def __init__(self):
@@ -79,6 +80,7 @@ class Installer(ctk.CTk):
         download_res.raise_for_status()
         data = download_res.content
         download_path.write_bytes(data)
+
 
 if __name__ == "__main__":
     installer = Installer()
