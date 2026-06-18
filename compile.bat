@@ -1,2 +1,2 @@
-pyinstaller --onefile --noconsole --noconfirm --icon "logo.ico" -n "Installer" main.py
+call ".venv\Scripts\pyinstaller.exe" --specpath "build" --onefile --noconsole --icon "logo.ico" -n "Installer" main.py
 rd /S /Q "build"
