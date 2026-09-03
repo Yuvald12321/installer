@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
@@ -8,8 +9,11 @@ class Installer(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.token = "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"
-        self.headers = {"Authorization": f"token {self.token}"}
+        self.token = self.get_token()
+        if self.token:
+            self.headers = {"Authorization": f"Bearer {self.token}"}
+        else:
+            self.headers = {}
         self.username = "Yuvald12321"
         self.download_folder = Path.home() / "Downloads"
         self.ask_download_folder()
@@ -22,18 +26,46 @@ class Installer(ctk.CTk):
         self.programs = self.get_programs()
 
         self.program_selection_frame = ctk.CTkFrame(self)
-        self.program_selection_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        self.program_selection_frame.grid(column=0, row=0, padx=(20, 6), pady=20, sticky="nsew")
         self.program_selection_frame.grid_columnconfigure(0, weight=1)
 
-        self.program_selection_label = ctk.CTkLabel(self.program_selection_frame, text="Select a program to install:")
-        self.program_selection_label.grid(row=0, column=0, padx=10, pady=10)
+        self.program_selection_label = ctk.CTkLabel(self.program_selection_frame, text="Select a program to install")
+        self.program_selection_label.grid(column=0, row=0, padx=10, pady=10)
 
         self.program_option_menu = ctk.CTkOptionMenu(self.program_selection_frame, values=list(self.programs.keys()))
-        self.program_option_menu.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
+        self.program_option_menu.grid(column=0, row=1, padx=10, pady=10, sticky="ew")
         self.program_option_menu.set("Select Program")
 
         self.install_button = ctk.CTkButton(self.program_selection_frame, text="Install", command=self.install_selected_program)
-        self.install_button.grid(row=2, column=0, padx=10, pady=10)
+        self.install_button.grid(column=0, row=2, padx=10, pady=10)
+
+        self.colored_dot_button = ctk.CTkButton(self, text="", command=self.save_token, width=14, height=14, corner_radius=7, fg_color ="green" if self.token else "red")
+        self.colored_dot_button.grid(column=1, row=0, padx=(0, 5), pady=5, sticky="ne")
+
+    @staticmethod
+    def get_token():
+        path = Path(sys.executable).parent / "api.key"
+        if path.exists():
+            token = path.read_text(encoding="utf-8")
+            return token
+        else:
+            return None
+
+    def save_token(self):
+        token = ctk.CTkInputDialog(title="Enter your token", text="Enter your token").get_input()
+        if token:
+            token = token.strip()
+            path = Path(sys.executable).parent / "api.key"
+            path.write_text(token, encoding="utf-8")
+            self.token = token
+            self.headers = {"Authorization": f"Bearer {self.token}"}
+            self.colored_dot_button.configure(fg_color="green")
+            self.refresh_programs()
+
+    def refresh_programs(self):
+        self.programs = self.get_programs()
+        self.program_option_menu.configure(values=list(self.programs.keys()))
+        self.program_option_menu.set("Select Program")
 
     def install_selected_program(self):
         selected_program = self.program_option_menu.get()
